@@ -31,6 +31,7 @@ async function run() {
     await client.connect();
 
     const userCollection = client.db("TasklyDB").collection("users");
+    const taskCollection = client.db("TasklyDB").collection("tasks");
 
 
      // Users APIs
@@ -47,6 +48,21 @@ async function run() {
         else {
             res.send({ message: "User already exists in the database" });
         }
+    })
+
+    // Post a new task
+    app.post("/task", async (req, res) => {
+        const newTask = req.body;
+        const query = {email: newTask.email, name: newTask.name};
+        const existingTask = await taskCollection.findOne(query);
+        if(!existingTask){
+            const result = await taskCollection.insertOne(newTask);
+            res.send(result);
+        }
+        else {
+            res.send({ message: "Task name already exists in the database" });
+        }
+
     })
 
 
