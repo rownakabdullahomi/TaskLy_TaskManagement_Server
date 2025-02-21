@@ -50,8 +50,8 @@ async function run() {
             }
         })
 
-        // Post a new task
-        app.post("/task", async (req, res) => {
+        // Create a new task
+        app.post("/tasks", async (req, res) => {
             const newTask = req.body;
             const query = { email: newTask.email, name: newTask.name };
             const existingTask = await taskCollection.findOne(query);
@@ -65,13 +65,33 @@ async function run() {
 
         })
 
+         app.put("/drag-update/tasks/:id", async (req, res) => {
+            const id = req.params.id;
+            const { status } = req.body;
+            const query = { _id: new ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                   status,
+                }
+            }
+            const result = await taskCollection.updateOne(query, updatedDoc);
+            res.send(result);
+        })
+
+
+
         // get all tasks of a specific user
         app.get("/tasks/:email", async (req, res) => {
             const email = req.params.email;
             const query = { createdBy: email };
-            const result = await taskCollection.find(query).toArray();
-            res.send(result);
-        })
+            try {
+              const result = await taskCollection.find(query).sort({ order: 1 }).toArray();
+              res.send(result);
+            } catch (error) {
+              res.status(500).send({ message: "Failed to fetch tasks", error });
+            }
+          });
+          
         // get all todo-tasks of a specific user
         app.get("/todo-tasks/:email", async (req, res) => {
             const email = req.params.email;
@@ -82,7 +102,7 @@ async function run() {
         // get all in-progress-tasks of a specific user
         app.get("/in-progress-tasks/:email", async (req, res) => {
             const email = req.params.email;
-            const query = { createdBy: email, status: "inProgress" };
+            const query = { createdBy: email, status: "inprogress" };
             const result = await taskCollection.find(query).toArray();
             res.send(result);
         })
@@ -95,7 +115,7 @@ async function run() {
         })
 
         // update a task of an specific user
-        app.patch("/task/:id", async (req, res) => {
+        app.put("/tasks/:id", async (req, res) => {
             const id = req.params.id;
             const { name, description } = req.body;
             const query = { _id: new ObjectId(id) };
@@ -108,9 +128,10 @@ async function run() {
             const result = await taskCollection.updateOne(query, updatedDoc);
             res.send(result);
         })
+       
 
         // delete a task of an specific user
-        app.delete("/task/:id", async (req, res) => {
+        app.delete("/tasks/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await taskCollection.deleteOne(query);
