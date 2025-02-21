@@ -65,6 +65,20 @@ async function run() {
 
         // })
 
+
+        // app.put("/drag-update/tasks/:id", async (req, res) => {
+        //     const id = req.params.id;
+        //     const { status } = req.body;
+        //     const query = { _id: new ObjectId(id) };
+        //     const updatedDoc = {
+        //         $set: {
+        //             status,
+        //         }
+        //     }
+        //     const result = await taskCollection.updateOne(query, updatedDoc);
+        //     res.send(result);
+        // })
+
         // Create a new task
         app.post("/tasks", async (req, res) => {
             const newTask = req.body;
@@ -79,22 +93,23 @@ async function run() {
             }
         });
 
+
+
+
+        // Update task status and order
         app.put("/drag-update/tasks/:id", async (req, res) => {
             const id = req.params.id;
-            const { status } = req.body;
+            const { status, order } = req.body;
             const query = { _id: new ObjectId(id) };
             const updatedDoc = {
                 $set: {
                     status,
-                }
-            }
+                    ...(order !== undefined && { order }), // Update order if provided
+                },
+            };
             const result = await taskCollection.updateOne(query, updatedDoc);
             res.send(result);
-        })
-
-
-
-
+        });
 
 
 
