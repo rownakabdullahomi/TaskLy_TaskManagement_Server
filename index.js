@@ -51,27 +51,41 @@ async function run() {
         })
 
         // Create a new task
+        // app.post("/tasks", async (req, res) => {
+        //     const newTask = req.body;
+        //     const query = { email: newTask.email, name: newTask.name };
+        //     const existingTask = await taskCollection.findOne(query);
+        //     if (!existingTask) {
+        //         const result = await taskCollection.insertOne(newTask);
+        //         res.send(result);
+        //     }
+        //     else {
+        //         res.send({ message: "Task name already exists in the database" });
+        //     }
+
+        // })
+
+        // Create a new task
         app.post("/tasks", async (req, res) => {
             const newTask = req.body;
             const query = { email: newTask.email, name: newTask.name };
             const existingTask = await taskCollection.findOne(query);
             if (!existingTask) {
+                newTask.order = 0; // Default order
                 const result = await taskCollection.insertOne(newTask);
                 res.send(result);
-            }
-            else {
+            } else {
                 res.send({ message: "Task name already exists in the database" });
             }
+        });
 
-        })
-
-         app.put("/drag-update/tasks/:id", async (req, res) => {
+        app.put("/drag-update/tasks/:id", async (req, res) => {
             const id = req.params.id;
             const { status } = req.body;
             const query = { _id: new ObjectId(id) };
             const updatedDoc = {
                 $set: {
-                   status,
+                    status,
                 }
             }
             const result = await taskCollection.updateOne(query, updatedDoc);
@@ -80,18 +94,23 @@ async function run() {
 
 
 
+
+
+
+
+
         // get all tasks of a specific user
         app.get("/tasks/:email", async (req, res) => {
             const email = req.params.email;
             const query = { createdBy: email };
             try {
-              const result = await taskCollection.find(query).sort({ order: 1 }).toArray();
-              res.send(result);
+                const result = await taskCollection.find(query).sort({ order: 1 }).toArray();
+                res.send(result);
             } catch (error) {
-              res.status(500).send({ message: "Failed to fetch tasks", error });
+                res.status(500).send({ message: "Failed to fetch tasks", error });
             }
-          });
-          
+        });
+
         // get all todo-tasks of a specific user
         app.get("/todo-tasks/:email", async (req, res) => {
             const email = req.params.email;
@@ -128,7 +147,7 @@ async function run() {
             const result = await taskCollection.updateOne(query, updatedDoc);
             res.send(result);
         })
-       
+
 
         // delete a task of an specific user
         app.delete("/tasks/:id", async (req, res) => {
