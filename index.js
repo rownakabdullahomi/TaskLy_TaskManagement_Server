@@ -111,6 +111,24 @@ async function run() {
             res.send(result);
         });
 
+        // Bulk reorder tasks
+        app.put("/reorder-tasks", async (req, res) => {
+            const { tasks } = req.body; // [{ id, order }]
+            const bulkOps = tasks.map((task) => ({
+                updateOne: {
+                    filter: { _id: new ObjectId(task.id) },
+                    update: { $set: { order: task.order } },
+                },
+            }));
+
+            try {
+                const result = await taskCollection.bulkWrite(bulkOps);
+                res.send(result);
+            } catch (error) {
+                res.status(500).send({ message: "Failed to reorder tasks", error });
+            }
+        });
+
 
 
 
