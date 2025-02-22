@@ -10,14 +10,15 @@
 ---
 
 ## ✨ Short Description
-Welcome to the backend server of **TaskLy**, a feature-rich task management system built using the **MERN stack**. This server handles core functionalities like user authentication, task management, and drag-and-drop task reordering.
+Welcome to the backend server of **TaskLy**, a feature-rich task management system built using the **MERN stack**. This server handles core functionalities like user authentication, task management, track overdue tasks and drag-and-drop task reordering or chnging categories.
 
 ---
 
 ## 🌟 Features
 
 - 🔐 **User Authentication**: Manage users securely.
-- ✅ **Task Management**: Create, update, delete, and reorder tasks.
+- ✅ **Task Management**: Create, update, delete, and reorder tasks by drag and drop.
+- 📌 **Track Overdue Tasks**: Track overdue tasks based on due dates.
 - 🔄 **Drag-and-Drop Support**: Reorder tasks dynamically.
 - 📊 **Task Categorization**: Organize tasks into "To-Do," "In Progress," and "Done."
 - 📁 **MongoDB Database**: Store and manage task data efficiently.
@@ -50,7 +51,7 @@ Welcome to the backend server of **TaskLy**, a feature-rich task management syst
 
 - **Create a Task**
   - `POST /tasks`
-  - **Request Body:** `{ name, description, status, createdBy }`
+  - **Request Body:** `{ name, description, dueDate, status, createdBy }`
   - **Response:** `{ insertedId: string }`
 
 - **Get All Tasks by User**
@@ -65,7 +66,7 @@ Welcome to the backend server of **TaskLy**, a feature-rich task management syst
 
 - **Update a Task**
   - `PUT /tasks/:id`
-  - **Request Body:** `{ name, description }`
+  - **Request Body:** `{ name, description, dueDate }`
   - **Response:** `{ matchedCount, modifiedCount }`
 
 - **Update Task Status and Order**

@@ -169,12 +169,13 @@ async function run() {
         // update a task of an specific user
         app.put("/tasks/:id", async (req, res) => {
             const id = req.params.id;
-            const { name, description } = req.body;
+            const { name, description, dueDate } = req.body;
             const query = { _id: new ObjectId(id) };
             const updatedDoc = {
                 $set: {
                     name,
                     description,
+                    dueDate,
                 }
             }
             const result = await taskCollection.updateOne(query, updatedDoc);
